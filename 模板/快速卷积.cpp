@@ -1,4 +1,4 @@
-//http://www.csdn123.com/html/itweb/20130724/18605_18621_18636.htm
+//http://www.cnblogs.com/kuangbin/archive/2013/07/24/3210565.html
 //http://acm.hdu.edu.cn/showproblem.php?pid=4609
 #include <stdio.h>
 #include <iostream>
