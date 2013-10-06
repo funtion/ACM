@@ -11,11 +11,10 @@ int n, x, y, z, es, k, tt;
 int pre[MAX], in[MAX], id[MAX], vis[MAX];
 int pnt[MAX][3];
 
+void addedge( int u, int v, int w ) {  
+        edge[es].u = u, edge[es].v = v, edge[es++].w = w;  
+}  
 
-int dist( int i, int j )
-{
-    return abs( pnt[i][0] - pnt[j][0] ) + abs( pnt[i][1] - pnt[j][1] ) + abs( pnt[i][2] - pnt[j][2] );
-}
 int dirMst( int root, int vs )
 {
     int ans = 0;
