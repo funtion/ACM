@@ -1,0 +1,140 @@
+熟悉STL或熟悉ACM/ICPC的话，其中的set, map, multiset, multimap一定用过无数次了，它们都是用平衡二叉树（红黑树）实现的，复杂度为O(lgn)。我们也知道set, map可以通过哈希来实现，复杂度只有O(1)，可惜直到现在，unsorted_set或hash_map都没能成为C++标准的一部分（C++0x，- -b）。不过无论在GNU GCC中还是Microsoft Visual Studio中都有对hash_set, hash_map, hash_multiset, hash_multimap的支持。
+
+GCC中的hash_map定义在<ext/hash_map>文件，namespace __gnu_cxx中。要定义一个hash_map<int, int>非常简单：
+
+#include <ext/hash_map>
+using namespace __gnu_cxx;
+hash_map<int, int> hm;
+在使用map时，如果我们想要改变元素顺序，或以自定义的struct/class作为key的时候，可以设定map第三个模板参数（默认是less<Key>，即operator<）。对于hash_map，我们需要设定其第三个(hash<Key>)和第四个模板参数(equal_to<Key>, operator==)。
+
+typedef long long my_type;
+typedef int any_type;
+struct my_hash {
+    size_t operator()(const my_type& key) const {
+        return (key >> 32) ^ key;
+    }
+};
+struct my_equal_to {
+    bool operator()(const my_type& lhs, const my_type& rhs) const {
+        return lhs == rhs;
+    }
+};
+hash_map<my_type, any_type, my_hash, my_equal_to> my_hash_map;
+对与int等基本类型，系统提供有hash<int>等版本的模板特化，所以只需要指定前两个模板参数就足够了。实现了模板特化的有以下类型
+
+[const] char*, crope, wrope, [signed|unsigned] char, [unsigned] short, [unsigned] int, [unsigned] long
+如果需要的话，我们也可以为其他类型实现模板特化
+
+1
+// hash_map<Key, Tp, HashFn=hash<Key>, EqualKey=equal_to<Key>, Alloc=allocator<Tp> >
+2
+#include <cstdio>
+3
+#include <utility>
+4
+#include <hash_map>
+5
+using namespace std;
+6
+using namespace __gnu_cxx;
+7
+ 
+8
+namespace __gnu_cxx {
+9
+    template<>
+10
+    struct hash<pair<int, int> > {
+11
+        size_t operator()(const pair<int, int>& key) const {
+12
+            return key.first * key.second;
+13
+        }
+14
+    };
+15
+}
+16
+hash_map<pair<int, int>, int> hm;
+Visual C++的hash_map定义在<hash_map>文件，namespace stdext中，早先在namespace std中。其实现与GCC的不同，模板参数也不一样，比如上面的例子在VC++版本如下
+
+1
+// hash_map<Key, Type, Traits=hash_compare<Key, less<Key> >, Allocator=allocator<pair<const Key, Type> > >
+2
+>
+3
+class hash_map
+4
+#include <cstdio>
+5
+#include <utility>
+6
+#include <hash_map>
+7
+using namespace std;
+8
+using namespace stdext;
+9
+ 
+10
+template<>
+11
+struct hash_compare<pair<int, int> > {
+12
+    // the mean number of elements per bucket
+13
+    static const size_t bucket_size = 4;
+14
+    // the minimum number of buckets
+15
+    static const size_t min_buckets = 8;
+16
+    // hash function
+17
+    size_t operator()(const pair<int, int>& key) const {
+18
+        return key.first * key.second;
+19
+    }
+20
+    // compare function
+21
+    bool operator()(const pair<int, int>& lhs, const pair<int, int>& rhs) const {
+22
+        return lhs < rhs;
+23
+    }
+24
+};
+25
+hash_map<pair<int, int>, int> hm;
+相比前面的hash，上面的hash_compare显然要复杂不少。
+
+不过二者提供的方法基本一致，也和std::map和其他STL容器相似。所以对于上面定义的hash_map，我们都可以用下面的代码进行测试
+
+view sourceprint?
+1
+...
+2
+int main() {
+3
+    int n;
+4
+    scanf("%d", &n);
+5
+    for (int i = 0; i < n; ++i) {
+6
+        hm[make_pair(i, i)] = i;
+7
+    }
+8
+    for (hash_map<pair<int, int>, int>::iterator i = hm.begin(); i != hm.end(); ++i) {
+9
+        printf("%d ", i->second);
+10
+    }
+11
+    printf("\n%d / %d\n", hm.size(), hm.bucket_count());
+12
+    return 0;
