@@ -56,10 +56,10 @@ int main()
 			else
 			{
 				scanf("%d%d",&x1,&y1);
-				printf("%d/n",Get(x1,y1)%2);
+				printf("%d\n",Get(x1,y1)%2);
 			}
 		}
-		printf("/n");
+		printf("\n");
 	}
 return 0;
 }
