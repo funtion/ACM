@@ -1,0 +1,9 @@
+int dfs(int i, int s, bool e) {
+    if (i==-1) return s==target_s;
+    if (!e && ~f[i][s]) return f[i][s];
+    int res = 0;
+    int u = e?num[i]:9;
+    for (int d = first?1:0; d <= u; ++d)
+        res += dfs(i-1, new_s(s, d), e&&d==u);
+    return e?res:f[i][s]=res;
+}
