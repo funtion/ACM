@@ -1,3 +1,4 @@
+//   O(N^3)
 #include <cstdio>
 #include <algorithm>
 #include <vector>
