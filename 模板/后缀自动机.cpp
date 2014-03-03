@@ -109,3 +109,46 @@ int main(){
 		calc();
 	}
 }
+////////////////////////////////////////////////////////////////////////////////////
+struct SAM {
+    struct {
+        int len, f, ch[26];
+        void init() {
+            len = 0, f = -1;
+            memset(ch, 0xff, sizeof (ch));
+        }
+    } e[N<<1];
+    int idx, last;
+    
+    void init() {
+        idx = last = 0;
+        e[idx++].init();
+    }
+    int newnode() {
+        e[idx].init();
+        return idx++;
+    }
+    void add(int c) {
+        int end = newnode();
+        int tmp = last;
+        e[end].len = e[last].len + 1;
+        for (; tmp != -1 && e[tmp].ch[c] == -1; tmp = e[tmp].f) {
+            e[tmp].ch[c] = end;
+        }
+        if (tmp == -1) e[end].f = 0;
+        else {
+            int nxt = e[tmp].ch[c];
+            if (e[tmp].len + 1 == e[nxt].len) e[end].f = nxt;
+            else {
+                int np = newnode();
+                e[np] = e[nxt];
+                e[np].len = e[tmp].len + 1;
+                e[nxt].f = e[end].f = np;
+                for (; tmp != -1 && e[tmp].ch[c] == nxt; tmp = e[tmp].f) {
+                    e[tmp].ch[c] = np;
+                }
+            }
+        }
+        last = end;
+    }
+};
