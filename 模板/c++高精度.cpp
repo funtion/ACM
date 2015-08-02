@@ -164,7 +164,7 @@ BigNum BigNum::operator-(const BigNum &T)const  //两个大数之间的相减运
         else t1.a[i]-=t2.a[i];
     }
     t1.len=big;
-    while(t1.a[len-1]==0 && t1.len>1)
+    while(t1.a[t1.len-1]==0 && t1.len>1)
     {
         t1.len--;
         big--;
